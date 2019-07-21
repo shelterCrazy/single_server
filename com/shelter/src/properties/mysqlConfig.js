@@ -1,0 +1,26 @@
+module.exports = {
+  release:{
+    master:{
+      host:"47.254.18.39",
+      user:"c14",
+      password:"shelterC14!",
+      database:"shelter",
+      acquireTimeout:"10000",
+      waitForConnections:"true",
+      connectionLimit:"10",
+      queueLimit:"0"
+    },
+  },
+  dev:{
+    master:{
+      host:"47.254.18.39",
+      user:"c14",
+      password:"shelterC14!",
+      database:"shelter",
+      acquireTimeout:"10000",
+      waitForConnections:"true",
+      connectionLimit:"10",
+      queueLimit:"0"
+    },
+  }
+}

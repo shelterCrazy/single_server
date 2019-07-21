@@ -1,0 +1,39 @@
+{
+  "name": "shelter_server",
+  "version": "1.0.0",
+  "description": "shelter_server",
+  "main": "shelter",
+  "scripts": {
+    "shelter": "node ./com/shelter/src/shelter.js dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shelterCrazy/shelter_server.git"
+  },
+  "author": "kenanCrazy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shelterCrazy/shelter_server/issues"
+  },
+  "homepage": "https://github.com/shelterCrazy/shelter_server#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "^4.15.5",
+    "express-session": "^1.15.6",
+    "forever": "~0.15.3",
+    "fs": "0.0.1-security",
+    "http-proxy": "^1.16.2",
+    "jade": "~1.11.0",
+    "jquery": "^3.3.1",
+    "log4js": "^2.7.0",
+    "morgan": "~1.8.1",
+    "mysql": "^2.15.0",
+    "querystring": "^0.2.0",
+    "redis": "^2.8.0",
+    "serve-favicon": "~2.4.2",
+    "socket.io": "^2.1.1",
+    "somepackage": "0.0.1"
+  }
+}

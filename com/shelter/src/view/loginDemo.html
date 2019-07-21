@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆注册验证码demo</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/jquery-3.3.1.js"></script>
+
+    <style>
+        .tableCss{
+            width: 600px;
+            margin: auto;
+        }
+        .tableCss .text{
+            width: 30%;
+        }
+        .tableCss .content{
+            width: 70%;
+        }
+    </style>
+</head>
+<body>
+
+
+    <table  border="0" class="tableCss">
+        <form id="form">
+        <tr>
+            <td class="text">
+                用户名:
+            </td>
+            <td class="content">
+                <input type="text" name="userName" id="userName"/><em id="name"></em>
+            </td>
+        </tr>
+        <tr>
+            <td class="text">
+                密码:
+            </td>
+            <td class="content">
+                <input type="password" name="password" id="password"/><em id="pwd"></em>
+            </td>
+        </tr>
+        <tr>
+            <td class="text">
+                确认密码:
+            </td>
+            <td class="content">
+                <input type="password" name="repassword" id="repassword"/><em id="rpwd"></em>
+            </td>
+        </tr>
+        <tr>
+            <td class="text" onclick="captcha()">
+                验证码(点我): <x></x> + <y></y> =
+            </td>
+            <td class="content">
+                <input name="captcha" id="captcha"/><em id="cap"></em>
+            </td>
+        </tr>
+        <tr>
+            <td style="margin: auto;">
+                <label onclick="register()">提交</label>
+            </td>
+        </tr>
+        </form>
+    </table>
+
+
+    <script type="text/javascript">
+
+        //验证码
+        var captcha = function(){
+            $.ajax({
+                url: "/login/captcha",
+                type: "get",
+                dataType: "json",
+                success: function(rs){
+                    if(rs.status == 200){
+                        $("x").html(rs.x);
+                        $("y").html(rs.y);
+                    }else{
+                        $("#cap").html("验证码获取失败").css("color","red");
+                    }
+                },
+                error: function(){
+                    $("#cap").html("验证码获取失败").css("color","red");
+                }
+            });
+        }
+
+        //重复校验
+        $("body").on("blur", "#userName", function(){
+            var name = $(this).val();
+            if(name == null || name == ""){
+                return ;
+            }
+
+            $.ajax({
+                url: "/login/nameReCheck",
+                type: "get",
+                dataType: "json",
+                data: {"userName": name},
+                success: function(rs){
+                    if(rs.status == 200){
+                        if(rs.flag){
+                            $("#name").html("OK").css("color","green");
+                        }else{
+                            $("#name").html(rs.msg).css("color","red");
+                        }
+                    }else{
+                        $("#name").html("用户名重复检验失败").css("color","red");
+                    }
+                },
+                error: function(){
+                    $("#name").html("用户名重复检验失败").css("color","red");
+                }
+            });
+        });
+
+        //提交
+        var register = function(){
+
+            $.ajax({
+                url: "/login/register",
+                type: "post",
+                dataType: "json",
+                data: $("#form").serialize(),
+                success: function(rs){
+                    if(rs.status == 200){
+                        alert("注册成功");
+                        window.location.href = "/socketIndex/index.html";
+                    }else{
+                        alert(rs.msg);
+                    }
+                },
+                error: function(){
+                    alert("注册错误");
+                }
+            });
+        }
+
+
+    </script>
+
+</body>
+</html>

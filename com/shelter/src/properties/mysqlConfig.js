@@ -1,5 +1,11 @@
 module.exports = {
   release:{
+    cluster:{
+      canRetry:"true",
+      removeNodeErrorCount:"5",
+      restoreNodeTimeout:"0",
+      defaultSelector:"RR"
+    },
     master:{
       host:"47.254.18.39",
       user:"c14",
@@ -9,9 +15,15 @@ module.exports = {
       waitForConnections:"true",
       connectionLimit:"10",
       queueLimit:"0"
-    },
+    }
   },
   dev:{
+    cluster:{
+      canRetry:"true",
+      removeNodeErrorCount:"5",
+      restoreNodeTimeout:"0",
+      defaultSelector:"RR"
+    },
     master:{
       host:"47.254.18.39",
       user:"c14",
@@ -21,6 +33,6 @@ module.exports = {
       waitForConnections:"true",
       connectionLimit:"10",
       queueLimit:"0"
-    },
+    }
   }
 }

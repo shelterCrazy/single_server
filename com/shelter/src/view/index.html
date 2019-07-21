@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>socket流程demo</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+    <p><b>呵呵 这是socket.io测试页面 </b><button onclick="start();login();">开始+登陆</button></p>
+    <p>使用说明: 首先F12 进入开发者工具模式</p>
+    <p>同频道操作顺序</p>
+    <p>1.joinMsg 加入聊天室   2.roomMsg 发送信息    3.endRoom 退出房间</p>
+
+    <p>匹配请求 match()</p>
+    <p>接受匹配返回的房间号 matchRoom 事件, data.room 属性</p>
+
+    <p>http访问链接不需要携带token参数</p>
+    <p>websocket链接必须携带token参数信息</p>
+
+    <script type="text/javascript">
+        //建立socket链接
+        var url = window.location.origin
+
+        var socket;
+        var token;
+        var userName = "kenan";
+        var password = "123456";
+        var roomTemp;
+
+
+        /**常量组*/
+        //消息结果
+        var msgEnum= {
+            success:200,   //普通消息
+            fail:1,     //操作失败消息反馈
+            error:2,    //错误消息
+        }
+
+
+
+        /**操作模块*/
+        //初始化页面  登陆访问   测试账户 kenan : 123456
+        var login = function(){
+            socket.emit('login', {'userName':userName,'password':password});
+        }
+        //默认空间  默认room  普通消息测试  消息广播
+        var broadcastMsg = function(msg){
+            socket.emit('broadcastMsg', {'msg': msg, 'token':token});
+        }
+        //普通消息测试  私聊
+        var msg = function(msg,id){
+            socket.emit('msg', {'msg': msg, 'id':id, 'token':token});
+        }
+
+
+
+        //申请room聊天室聊天   不加入房间不能收到消息，但是可以发消息
+        var joinMsg = function(room){
+            roomTemp = room;
+            socket.emit('join',{'room':room, 'token':token})
+        }
+        //room聊天  先joinMsg加入房间才能收到消息， 不加入的话只能发消息
+        var roomMsg = function(room, msg){
+            socket.emit('roomMsg', {'room':room, 'msg':msg, 'token':token});
+        }
+        //退出room
+        var endRoom = function(room){
+            socket.emit('leaveRoom', {'room':room, 'token':token})
+        }
+
+
+
+        //解除链接  退出游戏
+        var stop = function(){
+            status = statusEnum.exit;
+            socket.emit('close');  //向服务器发送关闭链接消息  然后断开链接
+            socket.close();
+        }
+
+        //匹配请求
+        var match = function(){
+            socket.emit('match', {'token':token});
+        }
+
+
+
+
+        /**模拟初始化+事件处理监听*/
+        //测试类启动
+        var start = function() {
+            socket = io.connect(url + "/index");
+
+            //登陆结果处理
+            socket.on('loginResult', function (data) {
+                console.log('loginResult:' + data.msg + " results:" + data.results);
+                token = data.results;
+
+            });
+            //错误处理
+            socket.on('error', function (error) {
+                console.log('error:' + error);
+            });
+            //链接已关闭
+            socket.on('disconnect', function (data) {
+                console.log('disconnect' + data.msg);
+            });
+            //重新链接成功
+            socket.on('reconnect', function () {
+                console.log('reconnect');
+
+                //如果处于room中断开连接  重连后重新加入room
+                if (roomTemp != undefined && roomTemp != null) {
+                    joinMsg(roomTemp);
+                }
+            });
+            //重连错误
+            socket.on('reconnect_error', function () {
+                console.log('reconnect_error');
+            });
+            //消息类监听
+            socket.on('msg', function (data) {
+                console.log('msg' + data.msg);
+            });
+            //匹配结果接收房间号
+            socket.on('matchRoom', function (data) {
+                console.log('matchRoom' + data.room);
+            });
+        }
+    </script>
+
+</body>
+</html>

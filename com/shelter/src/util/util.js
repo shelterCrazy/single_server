@@ -60,7 +60,6 @@ module.exports = {
             token = req.session.token;
         }
 
-        logt
         return token;
     }
 }

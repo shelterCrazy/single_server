@@ -16,16 +16,13 @@ var socket = require('socket.io');
 var util = require('./util/util');
 var connectUtil = require('./util/ConnectUtil');
 var loggerUtil = require('./util/logFactroy');
-var redisUtil = require('./util/redisUtil');
 var config = require('./properties/shelterConfig');
 var enumConfig = require('./model/enumConfig');
 
 
 //功能模块
 var indexControllor = require('./controller/indexControllor');  //登陆注册
-var userCard = require('./controller/userCardController');  //用户卡牌
 var interceptor = require('./Interceptor/LoginInterceptor');   //拦截器中间件
-var shop = require('./controller/shopController'); //商店相关
 var index_io = require('./action/indexAction');     //socket.io登录拦截等操作
 
 
@@ -41,15 +38,13 @@ if(args.length == 0){
 console.log(args);
 
 
+
 /** util初始化*/
-//引入外界js的方式分流书写app功能
 //初始化数据库链接
 connectUtil.init(args[0]);
 //初始化日志配置
 loggerUtil.init(args[0]);
 var logger = loggerUtil.getInstance();
-//初始化redis
-redisUtil.init(args[0]);
 
 var port = 3000;
 if(args[0] == "dev"){
@@ -61,7 +56,6 @@ if(args[0] == "dev"){
 
 
 /**  http服务初始化 */
-/*express初始化*/
 var server = http.Server(app);
 server.listen(port);    //必须是 http设置端口   app.listen(port) 并不会将端口给server
 //静态资源
@@ -69,13 +63,11 @@ app.use(express.static('public'));
 
 
 /** websocket 初始化 */
-/*socket.io 初始化*/
 var io =  socket(server,{
     pingTimeout: 6000,
     pingInterval: 10000
 });
 var index = io.of("/index"); //index 空间
-// var fighting = io.of("/xxx")
 
 
 
@@ -84,31 +76,12 @@ var index = io.of("/index"); //index 空间
 interceptor(app);
 //注册登陆功能信息
 indexControllor(app);
-//用户卡牌包-卡牌信息
-userCard(app);
-//商店相关
-shop(app);
-//匹配相关   作废 使用匹配机
-match(index);
 //socket.io 登录 房间room等操作
 index_io(index);
 
 /** 初始化结束 */
 
 
-
-//方案作废
-//启动注册服务
-// var regist = function(){
-//     let client = redisUtil.getClient();
-//     console.log("args[1]" + args[1]);
-//     client.sadd('serverList', args[1], function(err){
-//         client.smembers('serverList', function(err, list){
-//             console.log("client.smembers('serverList')\n" + JSON.stringify(list));
-//         });
-//     });
-// }
-// regist();
 
 
 //探测服务
@@ -117,18 +90,13 @@ app.get("/detect", function (req, res) {
 })
 
 
-//io中间件
-// index.use(function(socket, next){
-//     logger.debug("nameSpace.use");
-//     next();
-// });
 
 
 //战斗社交场景socket
 index.on("connection", function (socket) {
     logger.info("socket.io监听connection")
 
-    //登陆拦截器  socket中间件
+    //登陆拦截器  socket中间件   需要主动携带token参数
     socket.use(function(packet, next){
         logger.debug("packet:" + packet[0] + "packet.length:" + packet.length);
         if(packet[0] == 'login' || packet[0] == 'close' || packet[0] == 'disconnect'){

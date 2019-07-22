@@ -80,7 +80,6 @@ var init = function(){
         });
 
 
-
         //离开房间
         socket.on('leaveRoom', function(data){
             if(data.room != null && data.room != ""){
@@ -96,9 +95,9 @@ var init = function(){
 
         //匹配申请
         socket.on('match', function(data){
-            let token = data.token;
+            token = data.token;
             //这里处理匹配消息
-            let room = 1096 + token;
+            room = 1096 + token;
 
             socket.to(socket.id).emit('msg', {'status':enumConfig.prototype.msgEnum.success, 'msg':room});
         });

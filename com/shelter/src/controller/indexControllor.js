@@ -112,7 +112,6 @@ var init = function(){
         }
     });
 
-
     //获取验证码
     app.get('/login/captcha', function(req, res){
         res.writeHead(200, {'Content-Type': 'application/json'});

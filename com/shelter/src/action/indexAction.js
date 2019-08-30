@@ -10,6 +10,9 @@ var enumConfig = require('../model/enumConfig');
 var userService = require('../service/UserService');  //用户服务
 var index;
 
+var num = 0;
+var socketPool = [];
+
 
 //引入socket.io '/index' 空间对象
 module.exports = function(indexL){
@@ -76,6 +79,23 @@ var init = function(){
                 socket.to(data.room).emit('msg', {'status':200, 'msg':data.msg});
             }else{
                 socket.to(socket.id).emit('msg', {'status':enumConfig.prototype.msgEnum.fail, 'msg':'no room'});
+            }
+        });
+
+        //开始游戏的信号发送
+        socket.on('startMsg', function(data){
+            socketPool.push(socket);
+            num ++;
+            console.log(num);
+            if(num % 2 == 0){
+                if(data.room != null && data.room != ""){
+                    socketPool[0].to(data.room).emit('gameStart', {'status':200});
+                    socketPool[1].to(data.room).emit('gameStart', {'status':200});
+                    socketPool = [];
+                    num = 0;
+                }else{
+                    socket.to(socket.id).emit('msg', {'status':enumConfig.prototype.msgEnum.fail, 'msg':'no room'});
+                }
             }
         });
 

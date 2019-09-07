@@ -77,7 +77,7 @@ interceptor(app);
 //注册登陆功能信息
 indexControllor(app);
 //socket.io 登录 房间room等操作
-index_io(index);
+endTimer = index_io(index);
 
 /** 初始化结束 */
 
@@ -126,6 +126,7 @@ index.on("connection", function (socket) {
     //链接断开
     socket.on('disconnect', function(data){
         logger.info('socket.disconnect');
+        endTimer();
     });
 
 });

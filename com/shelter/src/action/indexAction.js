@@ -12,14 +12,98 @@ var index;
 
 var num = 0;
 var socketPool = [];
+var roomPool = {
+    "room":"",
+    "socketPool": [],
+    "data0": [],
+    "data1": [],
+    "frame": 1,
+    "timer": null
+};
 
 
 //引入socket.io '/index' 空间对象
 module.exports = function(indexL){
     index = indexL;
    init();
+   //endTimer();
+   return endTimer;
 }
 
+var gameStep = function(){
+    roomPool.socketPool[0].to(roomPool.room).emit('frameStep', {'status':200});
+    roomPool.socketPool[1].to(roomPool.room).emit('frameStep', {'status':200});
+    // if(roomPool["data0"][roomPool.frame] == null){
+    //     roomPool.socketPool[0].to(roomPool.room).emit(
+    //         'frameStep', {'status':200, 'msg':{
+    //             "type": "predict",
+    //             "msg": [{
+    //                 "value":null,
+    //                 "type":"null",
+    //                 "playerId":0,
+    //                 "frameNum":roomPool.frame
+    //             }]
+    //         }}
+    //         );
+    // }else if(roomPool["data0"][roomPool.frame].length == 0){
+    //     roomPool.socketPool[0].to(roomPool.room).emit(
+    //         'frameStep', {'status':200, 'msg':{
+    //             "type": "battle",
+    //             "msg": [{
+    //                 "value":null,
+    //                 "type":"null",
+    //                 "playerId":0,
+    //                 "frameNum":roomPool.frame
+    //             }]
+    //         }}
+    //         );
+    // }else{
+    //     roomPool.socketPool[0].to(roomPool.room).emit(
+    //         'frameStep', {'status':200, 'msg':{
+    //             "type": "battle",
+    //             "msg": roomPool["data0"][roomPool.frame]
+    //         }}
+    //         );
+    // }
+
+    // if(roomPool["data1"][roomPool.frame] == null){
+    //     roomPool.socketPool[1].to(roomPool.room).emit(
+    //         'frameStep', {'status':200, 'msg':{
+    //             "type": "predict",
+    //             "msg": [{
+    //                 "value":null,
+    //                 "type":"null",
+    //                 "playerId":1,
+    //                 "frameNum":roomPool.frame
+    //             }]
+    //         }}
+    //         );
+    // }else if(roomPool["data1"][roomPool.frame].length == 0){
+    //     roomPool.socketPool[1].to(roomPool.room).emit(
+    //         'frameStep', {'status':200, 'msg':{
+    //             "type": "battle",
+    //             "msg": [{
+    //                 "value":null,
+    //                 "type":"null",
+    //                 "playerId":1,
+    //                 "frameNum":roomPool.frame
+    //             }]
+    //         }}
+    //         );
+    // }else{
+    //     roomPool.socketPool[1].to(roomPool.room).emit(
+    //         'frameStep', {'status':200, 'msg':{
+    //             "type": "battle",
+    //             "msg": roomPool["data1"][roomPool.frame]
+    //         }}
+    //         );
+    // }
+
+    // roomPool.frame ++;
+}
+var endTimer = function(){
+    clearInterval(roomPool.timer);
+}
 
 var init = function(){
 
@@ -64,7 +148,7 @@ var init = function(){
 
         //进入房间
         socket.on('join', function(data){
-            console.log('join：' + data.room);
+            logger.debug('join：' + data.room);
             socket.join(data.room);
 
             //发送反馈消息
@@ -76,7 +160,24 @@ var init = function(){
         //room消息广播
         socket.on('roomMsg', function(data){
             if(data.room != null && data.room != ""){
-                socket.to(data.room).emit('msg', {'status':200, 'msg':data.msg});
+                if(data.msg.type == "battle")
+                {
+                    roomPool["data" + data.msg.msg[0].playerId][data.msg.msg[0].frameNum] = [];
+                    if(data.msg.msg[0].frameNum < roomPool.frame)
+                    {
+                        socket.to(data.room).emit('roll', {'status':200, 'msg':{
+                            "type":"reroll",
+                            "msg":data.msg.msg,
+                        }
+                        });
+                    }
+                    if(data.msg.msg[0].type === "null")return;
+                    for(var i in data.msg.msg){
+                        roomPool["data" + data.msg.msg[0].playerId][data.msg.msg[0].frameNum].push(data.msg.msg[i]);
+                    }
+                }else{
+                    socket.to(data.room).emit('msg', {'status':200, 'msg':data.msg});
+                }
             }else{
                 socket.to(socket.id).emit('msg', {'status':enumConfig.prototype.msgEnum.fail, 'msg':'no room'});
             }
@@ -84,14 +185,24 @@ var init = function(){
 
         //开始游戏的信号发送
         socket.on('startMsg', function(data){
-            socketPool.push(socket);
+            logger.debug(data.playerId);
+            socketPool[data.playerId] = socket;
             num ++;
-            console.log(num);
+            
             if(num % 2 == 0){
                 if(data.room != null && data.room != ""){
                     socketPool[0].to(data.room).emit('gameStart', {'status':200});
                     socketPool[1].to(data.room).emit('gameStart', {'status':200});
+                    roomPool.data0 = [];
+                    roomPool.data1 = [];
+                    roomPool.room = data.room;
+                    roomPool.socketPool = [];
+                    roomPool.socketPool.push(socketPool[0]);
+                    roomPool.socketPool.push(socketPool[1]);
+                    roomPool.frame = 1;
+                    
                     socketPool = [];
+                    roomPool.timer = setInterval(gameStep, 100);
                     num = 0;
                 }else{
                     socket.to(socket.id).emit('msg', {'status':enumConfig.prototype.msgEnum.fail, 'msg':'no room'});

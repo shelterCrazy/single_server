@@ -163,15 +163,11 @@ var init = function(){
                 if(data.msg.type == "battle")
                 {
                     roomPool["data" + data.msg.msg[0].playerId][data.msg.msg[0].frameNum] = [];
-                    if(data.msg.msg[0].frameNum < roomPool.frame)
-                    {
-                        socket.to(data.room).emit('roll', {'status':200, 'msg':{
-                            "type":"reroll",
-                            "msg":data.msg.msg,
-                        }
-                        });
+                    socket.to(data.room).emit('msg', {'status':200, 'msg':data.msg});
+
+                    if(data.msg.msg[0].type === "null"){
+                        return;
                     }
-                    if(data.msg.msg[0].type === "null")return;
                     for(var i in data.msg.msg){
                         roomPool["data" + data.msg.msg[0].playerId][data.msg.msg[0].frameNum].push(data.msg.msg[i]);
                     }

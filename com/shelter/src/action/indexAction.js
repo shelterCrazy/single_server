@@ -139,7 +139,7 @@ var init = function () {
                 roomPool[i].keyData[roomPool[i].frame] = [];
                 
                 var room = roomPool[i];
-                roomPool[i].timer = setInterval(function () {gameStep(room)}, 100);
+                roomPool[i].timer = setInterval(function () {gameStep(room)}, 50);
             }
         });
 
@@ -150,8 +150,7 @@ var init = function () {
                     room.socketPool[i].emit('frameStep', { 'status': 200, "msg": JSON.stringify(room.keyData[room.frame]),"frame":room.frame});
             }
             room.frame ++;
-            room.keyData[room.frame] = 
-            room.keyData[room.frame - 1].slice(0);
+            room.keyData[room.frame] = room.keyData[room.frame - 1].slice(0);
         }
 
         //离开房间

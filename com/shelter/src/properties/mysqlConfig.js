@@ -7,10 +7,10 @@ module.exports = {
       defaultSelector:"RR"
     },
     master:{
-      host:"47.254.18.39",
-      user:"c14",
-      password:"shelterC14!",
-      database:"shelter",
+      host:"148.70.66.137",
+      user:"root",
+      password:"kenanCrazy3!",
+      database:"mysql",
       acquireTimeout:"10000",
       waitForConnections:"true",
       connectionLimit:"10",
@@ -25,6 +25,19 @@ module.exports = {
       defaultSelector:"RR"
     },
     master:{
+      host:"148.70.66.137",
+      user:"root",
+      password:"kenanCrazy3!",
+      database:"mysql",
+      acquireTimeout:"10000",
+      waitForConnections:"true",
+      connectionLimit:"10",
+      queueLimit:"0"
+    }
+  }
+}
+
+/*
       host:"47.254.18.39",
       user:"c14",
       password:"shelterC14!",
@@ -33,6 +46,4 @@ module.exports = {
       waitForConnections:"true",
       connectionLimit:"10",
       queueLimit:"0"
-    }
-  }
-}
+      */

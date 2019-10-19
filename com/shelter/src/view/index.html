@@ -29,6 +29,7 @@
         var roomTemp;
 
 
+
         /**常量组*/
         //消息结果
         var msgEnum= {
@@ -90,6 +91,7 @@
         //测试类启动
         var start = function() {
             socket = io.connect(url + "/index");
+
 
             //登陆结果处理
             socket.on('loginResult', function (data) {

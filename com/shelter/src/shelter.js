@@ -24,6 +24,9 @@ var enumConfig = require('./model/enumConfig');
 var indexControllor = require('./controller/indexControllor');  //登陆注册
 var interceptor = require('./Interceptor/LoginInterceptor');   //拦截器中间件
 var index_io = require('./action/indexAction');     //socket.io登录拦截等操作
+var battle_io = require('./action/fight');     //socket.io登录拦截等操作
+
+var test = require('./action/client');     //socket.io登录拦截等操作
 
 
 
@@ -73,11 +76,11 @@ var index = io.of("/index"); //index 空间
 
 /** controller Action访问入口初始化*/
 //拦截器
-interceptor(app);
+//interceptor(app);
 //注册登陆功能信息
 indexControllor(app);
 //socket.io 登录 房间room等操作
-endTimer = index_io(index);
+index_io(index);
 
 /** 初始化结束 */
 
@@ -97,6 +100,7 @@ index.on("connection", function (socket) {
     logger.info("socket.io监听connection")
 
     //登陆拦截器  socket中间件   需要主动携带token参数
+    /*
     socket.use(function(packet, next){
         logger.debug("packet:" + packet[0] + "packet.length:" + packet.length);
         if(packet[0] == 'login' || packet[0] == 'close' || packet[0] == 'disconnect'){
@@ -116,6 +120,7 @@ index.on("connection", function (socket) {
         }
         next(new Error("请登陆"));
     });
+    */
 
     //error事件处理器
     socket.on('error', function(error){
@@ -123,10 +128,6 @@ index.on("connection", function (socket) {
         socket.emit('error',{'status': enumConfig.prototype.msgEnum.error, 'msg':'error:' + error});
     });
 
-    //链接断开
-    socket.on('disconnect', function(data){
-        logger.info('socket.disconnect');
-        endTimer();
-    });
+
 
 });

@@ -31,75 +31,11 @@ module.exports = function(indexL){
 }
 
 var gameStep = function(){
-    roomPool.socketPool[0].to(roomPool.room).emit('frameStep', {'status':200});
-    roomPool.socketPool[1].to(roomPool.room).emit('frameStep', {'status':200});
-    // if(roomPool["data0"][roomPool.frame] == null){
-    //     roomPool.socketPool[0].to(roomPool.room).emit(
-    //         'frameStep', {'status':200, 'msg':{
-    //             "type": "predict",
-    //             "msg": [{
-    //                 "value":null,
-    //                 "type":"null",
-    //                 "playerId":0,
-    //                 "frameNum":roomPool.frame
-    //             }]
-    //         }}
-    //         );
-    // }else if(roomPool["data0"][roomPool.frame].length == 0){
-    //     roomPool.socketPool[0].to(roomPool.room).emit(
-    //         'frameStep', {'status':200, 'msg':{
-    //             "type": "battle",
-    //             "msg": [{
-    //                 "value":null,
-    //                 "type":"null",
-    //                 "playerId":0,
-    //                 "frameNum":roomPool.frame
-    //             }]
-    //         }}
-    //         );
-    // }else{
-    //     roomPool.socketPool[0].to(roomPool.room).emit(
-    //         'frameStep', {'status':200, 'msg':{
-    //             "type": "battle",
-    //             "msg": roomPool["data0"][roomPool.frame]
-    //         }}
-    //         );
-    // }
-
-    // if(roomPool["data1"][roomPool.frame] == null){
-    //     roomPool.socketPool[1].to(roomPool.room).emit(
-    //         'frameStep', {'status':200, 'msg':{
-    //             "type": "predict",
-    //             "msg": [{
-    //                 "value":null,
-    //                 "type":"null",
-    //                 "playerId":1,
-    //                 "frameNum":roomPool.frame
-    //             }]
-    //         }}
-    //         );
-    // }else if(roomPool["data1"][roomPool.frame].length == 0){
-    //     roomPool.socketPool[1].to(roomPool.room).emit(
-    //         'frameStep', {'status':200, 'msg':{
-    //             "type": "battle",
-    //             "msg": [{
-    //                 "value":null,
-    //                 "type":"null",
-    //                 "playerId":1,
-    //                 "frameNum":roomPool.frame
-    //             }]
-    //         }}
-    //         );
-    // }else{
-    //     roomPool.socketPool[1].to(roomPool.room).emit(
-    //         'frameStep', {'status':200, 'msg':{
-    //             "type": "battle",
-    //             "msg": roomPool["data1"][roomPool.frame]
-    //         }}
-    //         );
-    // }
-
-    // roomPool.frame ++;
+    if(roomPool.data0[roomPool.frame] !== undefined && roomPool.data1[roomPool.frame] !== undefined){
+        roomPool.socketPool[0].to(roomPool.room).emit('frameStep', {'status':200, "msg":roomPool.data0[roomPool.frame]});
+        roomPool.socketPool[1].to(roomPool.room).emit('frameStep', {'status':200, "msg":roomPool.data1[roomPool.frame]});
+        roomPool.frame ++;
+    }
 }
 var endTimer = function(){
     clearInterval(roomPool.timer);
@@ -160,19 +96,10 @@ var init = function(){
         //room消息广播
         socket.on('roomMsg', function(data){
             if(data.room != null && data.room != ""){
-                if(data.msg.type == "battle")
-                {
-                    roomPool["data" + data.msg.msg[0].playerId][data.msg.msg[0].frameNum] = [];
-                    socket.to(data.room).emit('msg', {'status':200, 'msg':data.msg});
-
-                    if(data.msg.msg[0].type === "null"){
-                        return;
-                    }
-                    for(var i in data.msg.msg){
-                        roomPool["data" + data.msg.msg[0].playerId][data.msg.msg[0].frameNum].push(data.msg.msg[i]);
-                    }
-                }else{
-                    socket.to(data.room).emit('msg', {'status':200, 'msg':data.msg});
+                roomPool["data" + data.msg.msg[0].playerId][data.msg.msg[0].frameNum] = [];
+                //socket.to(data.room).emit('msg', {'status':200, 'msg':data.msg});
+                for(var i = 0; i < data.msg.msg.length; i++){
+                    roomPool["data" + data.msg.msg[0].playerId][data.msg.msg[0].frameNum].push(data.msg.msg[i]);
                 }
             }else{
                 socket.to(socket.id).emit('msg', {'status':enumConfig.prototype.msgEnum.fail, 'msg':'no room'});

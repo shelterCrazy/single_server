@@ -9,7 +9,7 @@
 var http = require('http');
 var express = require('express');
 var app = express();
-var socket = require('socket.io');
+var socket = require('socket.io', {rememberTransport:false, transports:['WebSocket','Flash Socket','AJAX long-polling']});
 
 
 //公共服务
@@ -26,7 +26,7 @@ var interceptor = require('./Interceptor/LoginInterceptor');   //拦截器中间
 var index_io = require('./action/indexAction');     //socket.io登录拦截等操作
 var battle_io = require('./action/fight');     //socket.io登录拦截等操作
 
-var test = require('./action/client');     //socket.io登录拦截等操作
+//var test = require('./action/client');     //socket.io登录拦截等操作
 
 
 

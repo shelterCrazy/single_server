@@ -139,7 +139,7 @@ var init = function () {
                 roomPool[i].keyData[roomPool[i].frame] = [];
                 
                 var room = roomPool[i];
-                roomPool[i].timer = setInterval(function () {gameStep(room)}, 50);
+                roomPool[i].timer = setInterval(function () {gameStep(room)}, 33);
             }
         });
 

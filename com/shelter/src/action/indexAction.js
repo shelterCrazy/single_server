@@ -139,8 +139,12 @@ var init = function () {
                 roomPool[i].keyData[roomPool[i].frame] = [];
                 
                 var room = roomPool[i];
+<<<<<<< HEAD
                 roomPool[i].timer = setInterval(function () {gameStep(room)}, 1000);
 
+=======
+                roomPool[i].timer = setInterval(function () {gameStep(room)}, 50);
+>>>>>>> parent of e2a4989... Update indexAction.js
             }
         });
 

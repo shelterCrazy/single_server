@@ -1,4 +1,4 @@
-/**
+﻿/**
  * kenan 游戏登陆/注册模块控制器
  */
 
@@ -92,17 +92,17 @@ var init = function () {
                         break;
                     }
                 }
-                //if (data.msg.type == "down") {
-                roomPool[i].keyData[roomPool[i].frame].push(data.msg);
-                // } else if (data.msg.type == "up") {
-                //     for (var j = 0; j < roomPool[i].keyData[roomPool[i].frame].length; j++) {
-                //         if (roomPool[i].keyData[roomPool[i].frame][j].value == data.msg.value &&
-                //             roomPool[i].keyData[roomPool[i].frame][j].playerId == data.msg.playerId) {
-                //             roomPool[i].keyData[roomPool[i].frame].splice(j, 1);
-                //             break;
-                //         }
-                //     }
-                // }
+                if (data.msg.type == "down") {
+                    roomPool[i].keyData[roomPool[i].frame].push(data.msg);
+                } else if (data.msg.type == "up") {
+                    for (var j = 0; j < roomPool[i].keyData[roomPool[i].frame].length; j++) {
+                        if (roomPool[i].keyData[roomPool[i].frame][j].value == data.msg.value &&
+                            roomPool[i].keyData[roomPool[i].frame][j].playerId == data.msg.playerId) {
+                            roomPool[i].keyData[roomPool[i].frame].splice(j, 1);
+                            break;
+                        }
+                    }
+                }
             }
         });
 
@@ -139,25 +139,18 @@ var init = function () {
                 roomPool[i].keyData[roomPool[i].frame] = [];
                 
                 var room = roomPool[i];
-<<<<<<< HEAD
-                roomPool[i].timer = setInterval(function () {gameStep(room)}, 1000);
-
-=======
-                roomPool[i].timer = setInterval(function () {gameStep(room)}, 50);
->>>>>>> parent of e2a4989... Update indexAction.js
+                roomPool[i].timer = setInterval(function () {gameStep(room)}, 100);
             }
         });
 
         var gameStep = function (room) {
             //room = roomPool[0];
             for (var i = 0; i < room.socketPool.length; i++) {
-                if (room.socketPool[i] != null){
-                    //for(var j = 0; j < room.keyData[room.frame].length; j++)
+                if (room.socketPool[i] != null)
                     room.socketPool[i].emit('frameStep', { 'status': 200, "msg": JSON.stringify(room.keyData[room.frame]),"frame":room.frame});
-                }
             }
             room.frame ++;
-            room.keyData[room.frame] = [];
+            room.keyData[room.frame] = room.keyData[room.frame - 1].slice(0);
         }
 
         //离开房间

@@ -140,6 +140,7 @@ var init = function () {
                 
                 var room = roomPool[i];
                 roomPool[i].timer = setInterval(function () {gameStep(room)}, 1000);
+
             }
         });
 

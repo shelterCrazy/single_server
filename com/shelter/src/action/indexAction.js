@@ -171,7 +171,12 @@ var init = function () {
                     room.socketPool[i].emit('frameStep', { 'status': 200, "msg": JSON.stringify(room.keyData[room.frame]),"frame":room.frame});
             }
             room.frame ++;
-            room.keyData[room.frame] = room.keyData[room.frame - 1].slice(0);
+            if(room.gameId == "jojo"){
+                room.keyData[room.frame] = room.keyData[room.frame - 1].slice(0);
+            }
+            if(room.gameId == "ConnectorOMEGA"){
+                room.keyData[room.frame] = [];
+            }           
         }
 
         //离开房间

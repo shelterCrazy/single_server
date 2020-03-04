@@ -205,7 +205,8 @@ var init = function () {
                 //玩家匹配的人数
                 "playerNum": data.playerNum
             });
-            for(var gameName in gameIdList){
+            for(var k in gameIdList){
+                var gameName = gameIdList[k]
                 //加入了房间以后，如果大于了人数的话，将其取出，创建一个房间，并且加入到同一个房间中
                 while (matchPool[gameName][data.playerNum].length >= data.playerNum) {
                     //构造房间数据
@@ -275,7 +276,8 @@ var init = function () {
         //点击匹配的玩家如果点击了取消的话，将会触发
         //但是已经完成匹配的玩家。会因为上面的match返回值而无法匹配
         socket.on('cancelMatch', function (data) {
-            for(var gameName in gameIdList){
+            for(var k in gameIdList){
+                var gameName = gameIdList[k]
                 for (var player = 0; player < matchPool[gameName][data.playerNum].length; player++) {
                     if (matchPool[gameName][data.playerNum][player].socket.id == socket.id) {
                         matchPool[gameName][data.playerNum].splice(player, 1);
@@ -322,7 +324,8 @@ var init = function () {
             //断开后首先获取socket
             //首先从匹配池开始查找
             for (var i = 1; i < 10; i++) {
-                for(var gameName in gameIdList){
+                for(var k in gameIdList){
+                    var gameName = gameIdList[k]
                     for (var j = 0; j < matchPool[gameName][i].length; j++) {
                         //找到的话，将其移除
                         if (matchPool[gameName][i][j].socket.id == socket.id) {

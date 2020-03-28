@@ -159,7 +159,7 @@ var init = function () {
                     roomPool[i].timer = setInterval(function () {gameStep(room)}, 100);
                 }
                 if(roomPool[i].gameId == "ConnectorOMEGA"){
-                    roomPool[i].timer = setInterval(function () {gameStep(room)}, 1000);
+                    roomPool[i].timer = setInterval(function () {gameStep(room)}, 100);
                 }
             }
         });
@@ -207,6 +207,7 @@ var init = function () {
                 "socket": socket,
                 //"playerId": data.playerId,
                 "playerRole": data.playerRole,
+                "runeConfig": data.playerConfig.runeConfig,
                 //玩家匹配的人数
                 "playerNum": data.playerNum
             });
@@ -242,6 +243,7 @@ var init = function () {
                                 "playerId": i,
                                 "playerName": "",
                                 "playerRole": matchPool[gameName][num][i].playerRole,
+                                "runeConfig": matchPool[gameName][num][i].runeConfig,
                                 "connection": true
                             });
                         roomData.room += '#' + matchPool[gameName][num][i].socket.id.slice(8, 15);

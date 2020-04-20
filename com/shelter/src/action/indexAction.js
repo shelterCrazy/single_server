@@ -199,15 +199,17 @@ var init = function () {
             //playerNum指的是，玩家参与的匹配房间的总人数
             if(data.gameId == undefined || data.gameId == null){
                 var gameId = "jojo";
+                var runeConfig = null;
             }else{
                 var gameId = data.gameId;
+                var runeConfig = data.playerConfig.runeConfig;
             }
             matchPool[gameId][data.playerNum].push({
                 "token": data.token,
                 "socket": socket,
                 //"playerId": data.playerId,
                 "playerRole": data.playerRole,
-                "runeConfig": data.playerConfig.runeConfig,
+                "runeConfig": runeConfig,
                 //玩家匹配的人数
                 "playerNum": data.playerNum
             });
